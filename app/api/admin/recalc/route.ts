@@ -8,12 +8,7 @@ export async function POST() {
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.status });
 
   const supabase = createAdminClient();
-
-  const { data: matches } = await supabase
-    .from("matches")
-    .select("id, home_score, away_score, status")
-    .eq("status", "FINISHED");
-
+  const { data: matches } = await supabase.from("matches").select("id, home_score, away_score, status").eq("status", "FINISHED");
   if (!matches) return NextResponse.json({ updated: 0 });
 
   let count = 0;

@@ -35,7 +35,6 @@ export default function MatchCard({ match, initialBet }: Props) {
   const isLocked = kickoff.getTime() <= Date.now();
   const isPlayed = match.status === "FINISHED";
 
-  // Auto-save on blur (debounced)
   useEffect(() => {
     if (!home || !away || isLocked) return;
     const hN = parseInt(home, 10);
@@ -76,25 +75,9 @@ export default function MatchCard({ match, initialBet }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <input
-            type="number"
-            min={0}
-            max={20}
-            value={home}
-            onChange={e => setHome(e.target.value)}
-            disabled={isLocked}
-            className="score-input"
-          />
+          <input type="number" min={0} max={20} value={home} onChange={e => setHome(e.target.value)} disabled={isLocked} className="score-input" />
           <span className="text-muted">:</span>
-          <input
-            type="number"
-            min={0}
-            max={20}
-            value={away}
-            onChange={e => setAway(e.target.value)}
-            disabled={isLocked}
-            className="score-input"
-          />
+          <input type="number" min={0} max={20} value={away} onChange={e => setAway(e.target.value)} disabled={isLocked} className="score-input" />
         </div>
 
         <div className="flex-1">
@@ -108,11 +91,7 @@ export default function MatchCard({ match, initialBet }: Props) {
           <span className="text-muted">Ergebnis</span>
           <span className="font-mono font-bold">{match.home_score} : {match.away_score}</span>
           {initialBet && initialBet.points !== null && (
-            <span className={`font-mono font-bold ${
-              initialBet.points === 3 ? "text-win" :
-              initialBet.points === 1 ? "text-accent" :
-              "text-muted"
-            }`}>
+            <span className={`font-mono font-bold ${initialBet.points === 3 ? "text-win" : initialBet.points === 1 ? "text-accent" : "text-muted"}`}>
               {initialBet.points} P
             </span>
           )}
