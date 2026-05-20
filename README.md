@@ -36,3 +36,5 @@ Siehe Vercel-Deployment-Config. ENV-Variablen erforderlich:
 
 ## Lizenz
 Internes Tool. Verwendung frei.
+
+<!-- deploy trigger 2026-05-20T06:39:48.204Z -->
