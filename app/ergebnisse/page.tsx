@@ -48,7 +48,7 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
               <div className="p-4 border-b border-border bg-bg/30">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-mono text-muted">{new Date(m.kickoff).toLocaleString("de-AT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+                    <span className="text-sm font-mono text-muted">{new Date(m.kickoff).toLocaleString("de-AT", { timeZone: "Europe/Vienna",  day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
                     <span className="font-medium">{flagOf(m.home_team)} {m.home_team} – {m.away_team} {flagOf(m.away_team)}</span>
                   </div>
                   <div className="flex items-center gap-3">
