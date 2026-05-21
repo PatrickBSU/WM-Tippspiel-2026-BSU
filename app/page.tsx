@@ -42,7 +42,7 @@ export default async function Home() {
             <div className="col-span-2"><div className="text-2xl font-display font-bold">2 Punkte × 12</div><div className="text-muted">Pro richtigem Gruppensieger</div></div>
           </div>
         </div>
-        <div className="text-sm text-muted">Sonderwetten-Deadline: <span className="text-ink font-mono">{deadline.toLocaleString("de-AT", { dateStyle: "long", timeStyle: "short" })}</span></div>
+        <div className="text-sm text-muted">Sonderwetten-Deadline: <span className="text-ink font-mono">{deadline.toLocaleString("de-AT", { timeZone: "Europe/Vienna",  dateStyle: "long", timeStyle: "short" })}</span></div>
       </div>
     </div>
   );
