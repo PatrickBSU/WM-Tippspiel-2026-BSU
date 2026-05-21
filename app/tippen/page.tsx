@@ -20,7 +20,12 @@ export default async function TippenPage({ searchParams }: { searchParams: { sta
     grouped[m.stage]!.push(m);
   });
 
-  const stages = Object.keys(grouped);
+  const STAGE_ORDER = Object.keys(STAGE_LABELS);
+  const stages = Object.keys(grouped).sort((a, b) => {
+    const ia = STAGE_ORDER.indexOf(a);
+    const ib = STAGE_ORDER.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
   const selectedStage = searchParams.stage && grouped[searchParams.stage] ? searchParams.stage : stages[0];
   const totalMatches = matches?.length || 0;
   const betCount = bets?.length || 0;
@@ -30,7 +35,7 @@ export default async function TippenPage({ searchParams }: { searchParams: { sta
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="font-display text-4xl font-bold tracking-tightest">Tippen</h1>
-          <p className="text-muted text-sm mt-1">{betCount} von {totalMatches} Spielen getippt · Auto-Speicherung</p>
+          <p className="text-muted text-sm mt-1">{betCount} von {totalMatches} Spielen getippt Â· Auto-Speicherung</p>
         </div>
       </div>
       <div className="overflow-x-auto -mx-4 px-4 mb-6">
