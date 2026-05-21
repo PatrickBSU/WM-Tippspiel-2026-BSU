@@ -21,9 +21,9 @@ export default async function TippenPage({ searchParams }: { searchParams: { sta
   });
 
   const STAGE_ORDER = [
-    "Gruppe A","Gruppe B","Gruppe C","Gruppe D","Gruppe E","Gruppe F",
-    "Gruppe G","Gruppe H","Gruppe I","Gruppe J","Gruppe K","Gruppe L",
-    "Achtelfinale","Viertelfinale","Halbfinale","Spiel um Platz 3","Finale"
+    "GROUP_A","GROUP_B","GROUP_C","GROUP_D","GROUP_E","GROUP_F",
+    "GROUP_G","GROUP_H","GROUP_I","GROUP_J","GROUP_K","GROUP_L",
+    "ROUND_OF_32","ROUND_OF_16","QUARTER_FINAL","SEMI_FINAL","THIRD_PLACE_FINAL","FINAL"
   ];
   const stages = Object.keys(grouped).sort((a, b) => {
     const ia = STAGE_ORDER.indexOf(a);
