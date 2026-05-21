@@ -62,9 +62,9 @@ export default function MatchCard({ match, initialBet }: Props) {
   return (
     <div className={`bg-surface border border-border rounded-lg p-4 ${isLocked ? "opacity-90" : ""}`}>
       <div className="flex items-center justify-between mb-3 text-xs text-muted">
-        <span>{kickoff.toLocaleString("de-AT", { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
+        <span>{new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(kickoff)}</span>
         <span className="font-mono">
-          {isPlayed ? "✓ Beendet" : isLocked ? "🔒 Gestartet" : status === "saved" ? "✓ Gespeichert" : status === "saving" ? "..." : ""}
+          {isPlayed ? "â Beendet" : isLocked ? "ð Gestartet" : status === "saved" ? "â Gespeichert" : status === "saving" ? "..." : ""}
         </span>
       </div>
 
