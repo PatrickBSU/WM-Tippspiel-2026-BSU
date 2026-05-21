@@ -21,7 +21,7 @@ export default function AdminPanel({ specialResults }: { specialResults: Special
   );
 
   function addLog(msg: string) {
-    setLog(l => [...l, `[${new Date().toLocaleTimeString("de-AT")}] ${msg}`]);
+    setLog(l => [...l, `[${new Date().toLocaleTimeString("de-AT", { timeZone: "Europe/Vienna" })}] ${msg}`]);
   }
 
   async function seedSchedule() {
