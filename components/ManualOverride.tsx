@@ -95,7 +95,7 @@ export default function ManualOverride({ matches }: { matches: Match[] }) {
       >
         <option value="">– Spiel wählen –</option>
         {matches.map(m => {
-          const date = new Date(m.kickoff).toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit" });
+          const date = new Date(m.kickoff).toLocaleDateString("de-AT", { timeZone: "Europe/Vienna",  day: "2-digit", month: "2-digit" });
           const score = m.home_score !== null ? ` [${m.home_score}:${m.away_score}]` : "";
           return (
             <option key={m.id} value={m.id}>
