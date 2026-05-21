@@ -39,7 +39,7 @@ export default async function TippenPage({ searchParams }: { searchParams: { sta
       <div className="flex items-end justify-between mb-6">
         <div>
           <h1 className="font-display text-4xl font-bold tracking-tightest">Tippen</h1>
-          <p className="text-muted text-sm mt-1">{betCount} von {totalMatches} Spielen getippt Ã· Auto-Speicherung</p>
+          <p className="text-muted text-sm mt-1">{betCount} von {totalMatches} Spielen getippt · Auto-Speicherung</p>
         </div>
       </div>
       <div className="overflow-x-auto -mx-4 px-4 mb-6">
