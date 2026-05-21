@@ -14,7 +14,7 @@ export default async function RanglistePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="font-display text-4xl font-bold tracking-tightest mb-2">Rangliste</h1>
-      <p className="text-muted text-sm mb-6">Tagesaktuelle Auswertung · {rows.length} Tipper · zuletzt aktualisiert: {new Date().toLocaleString("de-AT")}</p>
+      <p className="text-muted text-sm mb-6">Tagesaktuelle Auswertung · {rows.length} Tipper · zuletzt aktualisiert: {new Date().toLocaleString("de-AT", { timeZone: "Europe/Vienna" })}</p>
       <div className="bg-surface border border-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
