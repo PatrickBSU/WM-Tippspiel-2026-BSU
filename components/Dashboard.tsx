@@ -37,7 +37,7 @@ export default async function Dashboard({ userId }: { userId: string }) {
         <StatCard label="Dein Rang" value={myRank > 0 ? `${myRank}.` : "–"} sub={totalUsers > 0 ? `von ${totalUsers}` : ""} highlight={myRank <= 3 && myRank > 0} />
         <StatCard label="Gesamtpunkte" value={String(me?.total_points || 0)} sub={`${me?.exact_hits || 0} Volltreffer`} />
         <StatCard label="Getippt" value={`${myBetCount || 0}`} sub={`von ${totalMatches || 0} Spielen`} />
-        <StatCard label={daysUntil > 0 ? "Tage bis WM" : "WM läuft"} value={daysUntil > 0 ? String(daysUntil) : "🔴"} sub={daysUntil > 0 ? deadline.toLocaleDateString("de-AT") : "live"} />
+        <StatCard label={daysUntil > 0 ? "Tage bis WM" : "WM läuft"} value={daysUntil > 0 ? String(daysUntil) : "🔴"} sub={daysUntil > 0 ? deadline.toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" }) : "live"} />
       </div>
       <section>
         <div className="flex items-baseline justify-between mb-3">
@@ -53,9 +53,9 @@ export default async function Dashboard({ userId }: { userId: string }) {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-muted font-mono w-24">
-                      {kickoff.toLocaleString("de-AT", { weekday: "short", day: "2-digit", month: "2-digit" })}
+                      {kickoff.toLocaleString("de-AT", { timeZone: "Europe/Vienna",  weekday: "short", day: "2-digit", month: "2-digit" })}
                       <br />
-                      <span className="text-ink">{kickoff.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" })}</span>
+                      <span className="text-ink">{kickoff.toLocaleTimeString("de-AT", { timeZone: "Europe/Vienna",  hour: "2-digit", minute: "2-digit" })}</span>
                     </span>
                     <span className="font-medium">{flagOf(m.home_team)} {m.home_team} – {m.away_team} {flagOf(m.away_team)}</span>
                   </div>
