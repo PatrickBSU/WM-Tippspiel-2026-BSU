@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { flagOf } from "@/lib/data/teams";
+import Flag from "@/components/Flag";
 
 export default async function Dashboard({ userId }: { userId: string }) {
   const supabase = createClient();
@@ -57,7 +57,7 @@ export default async function Dashboard({ userId }: { userId: string }) {
                       <br />
                       <span className="text-ink">{kickoff.toLocaleTimeString("de-AT", { timeZone: "Europe/Vienna",  hour: "2-digit", minute: "2-digit" })}</span>
                     </span>
-                    <span className="font-medium">{flagOf(m.home_team)} {m.home_team} – {m.away_team} {flagOf(m.away_team)}</span>
+                    <span className="font-medium inline-flex items-center gap-1"><Flag team={m.home_team} /> {m.home_team} – {m.away_team} <Flag team={m.away_team} /></span>
                   </div>
                   <div className="text-sm">
                     {bet ? (<span className="font-mono text-accent">Dein Tipp: {bet.home_score} : {bet.away_score}</span>) : (<span className="text-muted">noch nicht getippt</span>)}
@@ -78,7 +78,7 @@ export default async function Dashboard({ userId }: { userId: string }) {
           <div className="space-y-2">
             {recentMatches.map(m => (
               <div key={m.id} className="bg-surface border border-border rounded-lg p-4 flex items-center justify-between">
-                <span className="font-medium">{flagOf(m.home_team)} {m.home_team} – {m.away_team} {flagOf(m.away_team)}</span>
+                <span className="font-medium inline-flex items-center gap-1"><Flag team={m.home_team} /> {m.home_team} – {m.away_team} <Flag team={m.away_team} /></span>
                 <span className="font-mono font-bold">{m.home_score} : {m.away_score}</span>
               </div>
             ))}

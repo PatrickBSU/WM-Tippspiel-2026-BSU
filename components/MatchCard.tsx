@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { flagOf } from "@/lib/data/teams";
+import Flag from "@/components/Flag";
 
 interface Match {
   id: number;
@@ -70,7 +70,7 @@ export default function MatchCard({ match, initialBet }: Props) {
 
       <div className="flex items-center gap-3">
         <div className="flex-1 text-right">
-          <span className="mr-2">{flagOf(match.home_team)}</span>
+          <Flag team={match.home_team} className="mr-2" />
           <span className="font-medium">{match.home_team}</span>
         </div>
 
@@ -82,7 +82,7 @@ export default function MatchCard({ match, initialBet }: Props) {
 
         <div className="flex-1">
           <span className="font-medium">{match.away_team}</span>
-          <span className="ml-2">{flagOf(match.away_team)}</span>
+          <Flag team={match.away_team} className="ml-2" />
         </div>
       </div>
 
