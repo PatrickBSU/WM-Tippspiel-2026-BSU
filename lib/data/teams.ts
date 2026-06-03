@@ -67,3 +67,23 @@ export function groupOf(team: string): string | null {
   }
   return null;
 }
+
+// ISO-3166-1 alpha-2 Codes (für flagcdn.com Bild-Flaggen; gb-eng/gb-sct als Sonderfall)
+export const CODES: Record<string, string> = {
+  Mexiko: "mx", Südkorea: "kr", Südafrika: "za", Tschechien: "cz",
+  Kanada: "ca", Schweiz: "ch", Katar: "qa", "Bosnien-Herzegowina": "ba",
+  Brasilien: "br", Marokko: "ma", Schottland: "gb-sct", Haiti: "ht",
+  USA: "us", Paraguay: "py", Australien: "au", Türkei: "tr",
+  Deutschland: "de", Ecuador: "ec", Elfenbeinküste: "ci", Curaçao: "cw",
+  Niederlande: "nl", Japan: "jp", Tunesien: "tn", Schweden: "se",
+  Belgien: "be", Iran: "ir", Ägypten: "eg", Neuseeland: "nz",
+  Spanien: "es", Uruguay: "uy", "Saudi-Arabien": "sa", "Kap Verde": "cv",
+  Frankreich: "fr", Senegal: "sn", Norwegen: "no", Irak: "iq",
+  Argentinien: "ar", Österreich: "at", Algerien: "dz", Jordanien: "jo",
+  Portugal: "pt", Kolumbien: "co", Usbekistan: "uz", "DR Kongo": "cd",
+  England: "gb-eng", Kroatien: "hr", Panama: "pa", Ghana: "gh",
+};
+
+export function flagCode(team: string): string | null {
+  return CODES[team] || null;
+}
