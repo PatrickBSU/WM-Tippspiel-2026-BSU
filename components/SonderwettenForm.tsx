@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { GROUPS, ALL_TEAMS, flagOf } from "@/lib/data/teams";
+import { GROUPS, ALL_TEAMS } from "@/lib/data/teams";
+import Flag from "@/components/Flag";
 
 interface Initial {
   champion: string | null;
@@ -58,17 +59,20 @@ export default function SonderwettenForm({ initial }: { initial: Initial | null 
           <div className="font-display font-bold text-xl">Weltmeister</div>
           <div className="text-muted text-sm">15 Punkte bei richtigem Tipp</div>
         </div>
-        <select
-          value={champion}
-          onChange={e => setChampion(e.target.value)}
-          disabled={isLocked}
-          className="w-full px-3 py-2 bg-bg border border-border rounded-md focus:outline-none focus:border-accent disabled:opacity-50"
-        >
-          <option value="">– wähle ein Team –</option>
-          {ALL_TEAMS.map(t => (
-            <option key={t} value={t}>{flagOf(t)} {t}</option>
-          ))}
-        </select>
+        <div className="flex items-center gap-3">
+          {champion && <Flag team={champion} className="shrink-0" />}
+          <select
+            value={champion}
+            onChange={e => setChampion(e.target.value)}
+            disabled={isLocked}
+            className="flex-1 px-3 py-2 bg-bg border border-border rounded-md focus:outline-none focus:border-accent disabled:opacity-50"
+          >
+            <option value="">– wähle ein Team –</option>
+            {ALL_TEAMS.map(t => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
       </section>
 
       <section className="bg-surface border border-border rounded-lg p-6 space-y-4">
@@ -95,17 +99,20 @@ export default function SonderwettenForm({ initial }: { initial: Initial | null 
           {Object.entries(GROUPS).map(([code, teams]) => (
             <div key={code}>
               <label className="text-xs text-muted mb-1 block">Gruppe {code}</label>
-              <select
-                value={groupWinners[code] || ""}
-                onChange={e => setGroupWinners({ ...groupWinners, [code]: e.target.value })}
-                disabled={isLocked}
-                className="w-full px-3 py-2 bg-bg border border-border rounded-md text-sm focus:outline-none focus:border-accent disabled:opacity-50"
-              >
-                <option value="">– wählen –</option>
-                {teams.map(t => (
-                  <option key={t} value={t}>{flagOf(t)} {t}</option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                {groupWinners[code] && <Flag team={groupWinners[code]} className="shrink-0" />}
+                <select
+                  value={groupWinners[code] || ""}
+                  onChange={e => setGroupWinners({ ...groupWinners, [code]: e.target.value })}
+                  disabled={isLocked}
+                  className="flex-1 px-3 py-2 bg-bg border border-border rounded-md text-sm focus:outline-none focus:border-accent disabled:opacity-50"
+                >
+                  <option value="">– wählen –</option>
+                  {teams.map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           ))}
         </div>
