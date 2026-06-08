@@ -12,7 +12,7 @@ export default function EinladenPage() {
   }, []);
 
   const url = origin || "https://tippspiel.example.com";
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=${encodeURIComponent(url + "/login")}&color=fafafa&bgcolor=141414`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=${encodeURIComponent(url + "/login")}&color=000000&bgcolor=ffffff`;
 
   const mailBody = `Hallo,\n\nich lade dich zum firmeninternen WM-Tippspiel 2026 ein.\n\n🔗 ${url}/login\n\nSo geht's:\n1. Auf den Link klicken\n2. Email-Adresse eingeben (du bekommst einen Anmeldelink zugesendet)\n3. Auf den Anmeldelink in der Mail klicken\n4. Alle 104 Spiele tippen + Weltmeister, Torschützenkönig und Gruppensieger\n\nPunktesystem: 3 Punkte für exaktes Ergebnis, 1 Punkt für richtige Tendenz.\nSonderwetten: WM 15 P, Torschütze 10 P, Gruppensieger 2 P pro Gruppe.\n\nDeadline für Sonderwetten und Gruppenspiele: 11. Juni 2026, 20:00 Uhr (WM-Anpfiff).\n\nViel Spaß und gutes Tippen!\n`;
 
