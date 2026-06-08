@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { flagOf } from "@/lib/data/teams";
+import Flag from "@/components/Flag";
 import { STAGE_LABELS } from "@/lib/data/schedule";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +49,7 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-mono text-muted">{new Date(m.kickoff).toLocaleString("de-AT", { timeZone: "Europe/Vienna",  day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</span>
-                    <span className="font-medium">{flagOf(m.home_team)} {m.home_team} – {m.away_team} {flagOf(m.away_team)}</span>
+                    <span className="font-medium inline-flex items-center gap-1"><Flag team={m.home_team} /> {m.home_team} – {m.away_team} <Flag team={m.away_team} /></span>
                   </div>
                   <div className="flex items-center gap-3">
                     {hasResult ? (<span className="font-mono font-bold text-xl">{m.home_score} : {m.away_score}</span>) : (<span className="text-muted text-sm">läuft / kein Ergebnis</span>)}
