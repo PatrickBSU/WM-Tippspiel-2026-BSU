@@ -36,9 +36,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="font-body min-h-screen flex flex-col">
         <header className="border-b border-border bg-surface/80 backdrop-blur sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-            <Link href="/" className="font-display font-bold text-lg tracking-tightest flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-accent rounded-full" />
-              WM Tippspiel <span className="text-muted">'26</span>
+            <Link href="/" className="font-display font-bold text-lg tracking-tightest flex items-center gap-2.5">
+              <span className="inline-flex items-center bg-white rounded-md px-1.5 py-1">
+                <img src="/logo.png" alt="BSU Bau Service Unterberger GmbH" className="h-6 w-auto" />
+              </span>
+              <span className="hidden sm:inline">WM Tippspiel <span className="text-muted">'26</span></span>
             </Link>
             <nav className="hidden md:flex items-center gap-1 text-sm">
               {user ? (
