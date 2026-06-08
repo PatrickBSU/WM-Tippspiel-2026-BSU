@@ -7,6 +7,7 @@ import Flag from "@/components/Flag";
 interface Match {
   id: number;
   kickoff: string;
+  stage: string;
   home_team: string;
   away_team: string;
   home_score: number | null;
@@ -32,7 +33,11 @@ export default function MatchCard({ match, initialBet }: Props) {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   const kickoff = new Date(match.kickoff);
-  const isLocked = kickoff.getTime() <= Date.now();
+  const isKO = !match.stage.startsWith("GROUP_");
+  const koStart = new Date("2026-06-28T00:00:00+02:00");
+  const tbd = match.home_team.includes("TBD") || match.away_team.includes("TBD");
+  const notOpenYet = isKO && (Date.now() < koStart.getTime() || tbd);
+  const isLocked = notOpenYet || kickoff.getTime() <= Date.now();
   const isPlayed = match.status === "FINISHED";
 
   useEffect(() => {
@@ -64,7 +69,7 @@ export default function MatchCard({ match, initialBet }: Props) {
       <div className="flex items-center justify-between mb-3 text-xs text-muted">
         <span>{new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(kickoff)}</span>
         <span className="font-mono">
-          {isPlayed ? "â Beendet" : isLocked ? "ð Gestartet" : status === "saved" ? "â Gespeichert" : status === "saving" ? "..." : ""}
+          {isPlayed ? "â Beendet" : notOpenYet ? "🔒 ab 28.06." : isLocked ? "ð Gestartet" : status === "saved" ? "â Gespeichert" : status === "saving" ? "..." : ""}
         </span>
       </div>
 
