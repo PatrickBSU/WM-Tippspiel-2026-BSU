@@ -48,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <NavLink href="/tippen">Tippen</NavLink>
                   <NavLink href="/sonderwetten">Sonderwetten</NavLink>
                   <NavLink href="/ergebnisse">Ergebnisse</NavLink>
+                  <NavLink href="/gruppen">Gruppen</NavLink>
                   <NavLink href="/rangliste">Rangliste</NavLink>
                   <NavLink href="/einladen">Einladen</NavLink>
                   {isAdmin && <NavLink href="/admin">Admin</NavLink>}
@@ -71,6 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     <Link href="/tippen" className="px-3 py-2 hover:bg-bg rounded">Tippen</Link>
                     <Link href="/sonderwetten" className="px-3 py-2 hover:bg-bg rounded">Sonderwetten</Link>
                     <Link href="/ergebnisse" className="px-3 py-2 hover:bg-bg rounded">Ergebnisse</Link>
+                    <Link href="/gruppen" className="px-3 py-2 hover:bg-bg rounded">Gruppen</Link>
                     <Link href="/rangliste" className="px-3 py-2 hover:bg-bg rounded">Rangliste</Link>
                     <Link href="/einladen" className="px-3 py-2 hover:bg-bg rounded">Einladen</Link>
                     {isAdmin && <Link href="/admin" className="px-3 py-2 hover:bg-bg rounded">Admin</Link>}
