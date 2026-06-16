@@ -28,9 +28,9 @@ function isGroupMatch(fd: any): boolean {
   return s.includes("GROUP") || s === "REGULAR_SEASON";
 }
 
-// Reihenfolge-unabhaengiger Schluessel fuer eine Paarung (Heim/Auswaerts egal).
+// Ungeordneter Schluessel fuer ein Team-Paar (Heim/Auswaerts-Reihenfolge egal).
 function pairKey(a: string, b: string): string {
-  return [a, b].sort().join(" | ");
+  return [a, b].sort().join("|");
 }
 
 export async function runSync(): Promise<SyncResult> {
@@ -48,13 +48,13 @@ export async function runSync(): Promise<SyncResult> {
     return { ok: false, updated: 0, bets: 0, error: e.message };
   }
 
-  // Gruppen-Spiele werden ueber die Paarung (Team-Set) zugeordnet - unabhaengig davon,
-  // welches Team football-data als Heim bzw. Auswaerts fuehrt. Die Heim/Auswaerts-
-  // Orientierung der DB bleibt erhalten; die Ergebnisse werden passend gedreht.
-  const groupBySet = new Map<string, any>();
+  // Gruppen-Spiele werden ueber ein UNGEORDNETES Team-Set zugeordnet. Heim/Auswaerts-Reihenfolge
+  // kann zwischen Seed und football-data abweichen (z.B. Spanien-Kap Verde vs. Kap Verde-Spanien);
+  // bei umgekehrter Orientierung werden die Tore unten passend getauscht.
+  const groupByTeams = new Map<string, any>();
   for (const m of dbMatches) {
     if (m.stage && m.stage.indexOf("GROUP_") === 0) {
-      groupBySet.set(pairKey(m.home_team, m.away_team), m);
+      groupByTeams.set(pairKey(m.home_team, m.away_team), m);
     }
   }
 
@@ -86,11 +86,14 @@ export async function runSync(): Promise<SyncResult> {
   for (const fd of fdMatches) {
     let dbMatch: any = null;
     const group = isGroupMatch(fd);
-    const homeDE = normalizeTeamName(fd.homeTeam ? fd.homeTeam.name : "");
-    const awayDE = normalizeTeamName(fd.awayTeam ? fd.awayTeam.name : "");
+    let swapScores = false;
 
     if (group) {
-      dbMatch = groupBySet.get(pairKey(homeDE, awayDE)) || null;
+      const homeDE = normalizeTeamName(fd.homeTeam ? fd.homeTeam.name : "");
+      const awayDE = normalizeTeamName(fd.awayTeam ? fd.awayTeam.name : "");
+      dbMatch = groupByTeams.get(pairKey(homeDE, awayDE)) || null;
+      // Wenn die DB das Spiel andersherum fuehrt als football-data, Tore drehen.
+      if (dbMatch && dbMatch.home_team !== homeDE) swapScores = true;
     } else {
       dbMatch = koByFdId.get(fd.id) || null;
     }
@@ -110,16 +113,9 @@ export async function runSync(): Promise<SyncResult> {
     }
 
     if (fd.status === "FINISHED" && fd.score.fullTime.home !== null && fd.score.fullTime.away !== null) {
-      let hs = fd.score.fullTime.home;
-      let as = fd.score.fullTime.away;
-      // Bei Gruppenspielen behaelt die DB ihre Heim/Auswaerts-Orientierung. Fuehrt
-      // football-data die Teams umgekehrt, werden die Tore entsprechend getauscht,
-      // damit sie zum richtigen DB-Team passen.
-      if (group && homeDE !== dbMatch.home_team) {
-        const t = hs; hs = as; as = t;
-      }
-      newData.home_score = hs;
-      newData.away_score = as;
+      // Tore immer in DB-Orientierung schreiben (so wie die Nutzer getippt haben).
+      newData.home_score = swapScores ? fd.score.fullTime.away : fd.score.fullTime.home;
+      newData.away_score = swapScores ? fd.score.fullTime.home : fd.score.fullTime.away;
     }
 
     await supabase.from("matches").update(newData).eq("id", dbMatch.id);
