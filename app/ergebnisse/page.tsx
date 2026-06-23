@@ -15,8 +15,13 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
 
   let bets: any[] = [];
   if (matchIds.length > 0) {
-    const { data } = await supabase.from("bets").select("match_id, home_score, away_score, points, user_id, profiles(display_name)").in("match_id", matchIds);
-    bets = data || [];
+    const PAGE = 1000;
+    for (let from = 0; ; from += PAGE) {
+      const { data } = await supabase.from("bets").select("match_id, home_score, away_score, points, user_id, profiles(display_name)").in("match_id", matchIds).range(from, from + PAGE - 1);
+      if (!data || data.length === 0) break;
+      bets = bets.concat(data);
+      if (data.length < PAGE) break;
+    }
   }
 
   const betsByMatch = new Map<number, any[]>();
