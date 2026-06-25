@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Flag from "@/components/Flag";
 import { STAGE_LABELS } from "@/lib/data/schedule";
+import { GROUPS } from "@/lib/data/teams";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,9 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
     if (!betsByMatch.has(b.match_id)) betsByMatch.set(b.match_id, []);
     betsByMatch.get(b.match_id)!.push(b);
   });
+
+  const { data: specialResults } = await supabase.from("special_results").select("group_winners").eq("id", 1).single();
+  const { data: specialBets } = await supabase.from("special_bets").select("group_winners, profiles(display_name)");
 
   const stages = Array.from(new Set((matches || []).map(m => m.stage)));
   const selectedStage = searchParams.stage || (matches?.[0]?.stage);
@@ -79,6 +83,61 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
           );
         })}
       </div>
+      {(() => {
+        const actualGW: Record<string, string> = (specialResults?.group_winners as Record<string, string>) ?? {};
+        const decided = Object.entries(GROUPS).filter(([code]) => actualGW[code]);
+        if (decided.length === 0) return null;
+        return (
+          <div className="mt-10">
+            <h2 className="font-display text-2xl font-bold tracking-tightest mb-1">Gruppensieger</h2>
+            <p className="text-muted text-sm mb-4">Wer hat den Gruppensieger richtig getippt? · 2 Punkte je Treffer</p>
+            <div className="space-y-4">
+              {decided.map(([code]) => {
+                const winner = actualGW[code];
+                const tips = (specialBets ?? [])
+                  .map((b: any) => ({ name: b.profiles?.display_name ?? "?", pick: b.group_winners?.[code] ?? null }))
+                  .filter((t: any) => t.pick)
+                  .sort((a: any, b: any) => {
+                    const ca = a.pick === winner ? 0 : 1;
+                    const cb = b.pick === winner ? 0 : 1;
+                    if (ca !== cb) return ca - cb;
+                    return String(a.name).localeCompare(String(b.name));
+                  });
+                const correctCount = tips.filter((t: any) => t.pick === winner).length;
+                return (
+                  <div key={code} className="bg-surface border border-border rounded-lg overflow-hidden">
+                    <div className="p-4 border-b border-border bg-bg/30">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-mono text-muted">Gruppe {code}</span>
+                          <span className="font-medium inline-flex items-center gap-1"><Flag team={winner} /> {winner}</span>
+                        </div>
+                        <span className="text-xs text-muted">{correctCount} / {tips.length} richtig</span>
+                      </div>
+                    </div>
+                    {tips.length > 0 && (
+                      <div className="divide-y divide-border">
+                        {tips.map((t: any, i: number) => {
+                          const ok = t.pick === winner;
+                          return (
+                            <div key={i} className="px-4 py-2 flex items-center justify-between text-sm">
+                              <span>{t.name}</span>
+                              <div className="flex items-center gap-4">
+                                <span className="inline-flex items-center gap-1 font-mono text-muted"><Flag team={t.pick} /> {t.pick}</span>
+                                <span className={`font-mono font-bold w-8 text-right ${ok ? "text-win" : "text-muted"}`}>{ok ? 2 : 0}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
