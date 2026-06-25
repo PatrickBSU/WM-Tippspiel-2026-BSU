@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { GROUPS, ALL_TEAMS, flagOf } from "@/lib/data/teams";
 
 interface SpecialResults {
@@ -53,22 +52,27 @@ export default function AdminPanel({ specialResults }: { specialResults: Special
 
   async function saveSpecial() {
     setBusy(true);
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("special_results")
-      .update({
+    const save = await fetch("/api/admin/save-special", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         champion: champion || null,
         top_scorer: topScorer || null,
         group_winners: groupWinners,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", 1);
-    addLog(error ? `✗ ${error.message}` : "✓ Sonderwetten-Ergebnisse gespeichert");
-    if (!error) {
-      const res = await fetch("/api/admin/recalc-special", { method: "POST" });
-      const data = await res.json();
-      addLog(res.ok ? `✓ ${data.updated} Sonderwetten neu bewertet` : `✗ ${data.error}`);
+      }),
+    });
+    const saveData = await save.json();
+    if (!save.ok) {
+      addLog(`✗ ${saveData.error}`);
+      setBusy(false);
+      return;
     }
+    addLog("✓ Sonderwetten-Ergebnisse gespeichert");
+
+    const res = await fetch("/api/admin/recalc-special", { method: "POST" });
+    const data = await res.json();
+    if (res.ok) addLog(`✓ Sonderwetten neu bewertet (${data.updated})`);
+    else addLog(`✗ ${data.error}`);
     setBusy(false);
   }
 
