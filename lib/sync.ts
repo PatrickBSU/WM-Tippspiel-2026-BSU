@@ -114,8 +114,14 @@ export async function runSync(): Promise<SyncResult> {
 
     if (fd.status === "FINISHED" && fd.score.fullTime.home !== null && fd.score.fullTime.away !== null) {
       // Tore immer in DB-Orientierung schreiben (so wie die Nutzer getippt haben).
-      newData.home_score = swapScores ? fd.score.fullTime.away : fd.score.fullTime.home;
-      newData.away_score = swapScores ? fd.score.fullTime.home : fd.score.fullTime.away;
+      // KO-Spiele nach regulaerer Spielzeit (90 Min) bewerten, nicht nach Verlaengerung/Elfmeter:
+      // fullTime enthaelt bei duration != REGULAR das Endergebnis inkl. ET/Elfmeter, 90 Min steht in regularTime.
+      const reg = fd.score.regularTime;
+      const use90 = !group && fd.score.duration && fd.score.duration !== "REGULAR" && reg && reg.home !== null && reg.away !== null;
+      const sHome = use90 ? reg.home : fd.score.fullTime.home;
+      const sAway = use90 ? reg.away : fd.score.fullTime.away;
+      newData.home_score = swapScores ? sAway : sHome;
+      newData.away_score = swapScores ? sHome : sAway;
     }
 
     await supabase.from("matches").update(newData).eq("id", dbMatch.id);
