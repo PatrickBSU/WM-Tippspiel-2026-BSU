@@ -11,7 +11,11 @@ interface FDMatch {
   group: string | null;
   homeTeam: { name: string };
   awayTeam: { name: string };
-  score: { fullTime: { home: number | null; away: number | null } };
+  score: {
+    duration?: string;
+    fullTime: { home: number | null; away: number | null };
+    regularTime?: { home: number | null; away: number | null } | null;
+  };
 }
 
 export async function fetchWorldCupMatches(apiKey: string): Promise<FDMatch[]> {
