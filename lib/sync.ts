@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/server";
-import { fetchWorldCupMatches, normalizeTeamName } from "@/lib/football-data";
+import { fetchWorldCupMatches, normalizeTeamName, fetchMatchDetail, extract90 } from "@/lib/football-data";
 import { scoreBet } from "@/lib/scoring";
 
 export interface SyncResult {
@@ -99,6 +99,10 @@ export async function runSync(): Promise<SyncResult> {
     }
     if (!dbMatch) continue;
 
+    // Bereits final gewertete Spiele nicht mehr anfassen (schuetzt manuelle Korrekturen,
+    // spart API-Detailabrufe und verhindert erneutes Ueberschreiben mit Verlaengerungs-Ergebnissen).
+    if (dbMatch.status === "FINISHED" && dbMatch.home_score !== null && dbMatch.away_score !== null) continue;
+
     const newData: any = { kickoff: fd.utcDate, status: fd.status, updated_at: new Date().toISOString() };
 
     // Nur bei KO-Spielen Team-Namen aus football-data uebernehmen, sobald die Paarung feststeht.
@@ -116,10 +120,23 @@ export async function runSync(): Promise<SyncResult> {
       // Tore immer in DB-Orientierung schreiben (so wie die Nutzer getippt haben).
       // KO-Spiele nach regulaerer Spielzeit (90 Min) bewerten, nicht nach Verlaengerung/Elfmeter:
       // fullTime enthaelt bei duration != REGULAR das Endergebnis inkl. ET/Elfmeter, 90 Min steht in regularTime.
-      const reg = fd.score.regularTime;
-      const use90 = !group && fd.score.duration && fd.score.duration !== "REGULAR" && reg && reg.home !== null && reg.away !== null;
-      const sHome = use90 ? reg.home : fd.score.fullTime.home;
-      const sAway = use90 ? reg.away : fd.score.fullTime.away;
+      let sHome = fd.score.fullTime.home;
+      let sAway = fd.score.fullTime.away;
+      if (!group) {
+        // 90-Min-Ergebnis ermitteln; der Listen-Endpoint foldet duration/regularTime
+        // teils weg -> dann einmalig das Match-Detail nachladen.
+        let s90 = extract90(fd.score);
+        if (!s90 || !fd.score.duration) {
+          try {
+            const detail = await fetchMatchDetail(apiKey, fd.id);
+            const d90 = extract90(detail && detail.score);
+            if (d90) s90 = d90;
+          } catch (e) {
+            // Detail nicht verfuegbar -> fullTime als Fallback
+          }
+        }
+        if (s90) { sHome = s90.home; sAway = s90.away; }
+      }
       newData.home_score = swapScores ? sAway : sHome;
       newData.away_score = swapScores ? sHome : sAway;
     }
