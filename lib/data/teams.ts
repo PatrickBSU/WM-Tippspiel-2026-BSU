@@ -37,7 +37,7 @@ export const EN_TO_DE: Record<string, string> = {
   "Mexico": "Mexiko", "South Korea": "Südkorea", "Korea Republic": "Südkorea",
   "South Africa": "Südafrika", "Czech Republic": "Tschechien", "Czechia": "Tschechien",
   "Canada": "Kanada", "Switzerland": "Schweiz", "Qatar": "Katar",
-  "Bosnia and Herzegovina": "Bosnien-Herzegowina", "Brazil": "Brasilien",
+  "Bosnia and Herzegovina": "Bosnien-Herzegowina", "Bosnia-Herzegovina": "Bosnien-Herzegowina", "Bosnia & Herzegovina": "Bosnien-Herzegowina", "Brazil": "Brasilien",
   "Morocco": "Marokko", "Scotland": "Schottland", "Haiti": "Haiti",
   "United States": "USA", "USA": "USA", "Paraguay": "Paraguay",
   "Australia": "Australien", "Türkiye": "Türkei", "Turkey": "Türkei",
