@@ -4,6 +4,19 @@ export const POINTS_CHAMPION = 15;
 export const POINTS_TOP_SCORER = 10;
 export const POINTS_PER_GROUP_WINNER = 2;
 
+// Normalisiert Namen für den Vergleich: Akzente/Diakritika entfernen,
+// Groß-/Kleinschreibung, Rand- und Mehrfach-Leerzeichen egalisieren.
+// So zählt z. B. "Kylian Mbappé", "kylian mbappe" oder "Kylian  Mbappe"
+// alle als korrekt, wenn das Ist-Ergebnis "Kylian Mbappe" ist.
+export function normalizeName(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
 export function scoreBet(tipHome: number, tipAway: number, resHome: number, resAway: number): number {
   if (tipHome === resHome && tipAway === resAway) return POINTS_EXACT;
   const tipTendency = Math.sign(tipHome - tipAway);
@@ -19,7 +32,7 @@ export function scoreChampion(tip: string | null, actual: string | null): number
 
 export function scoreTopScorer(tip: string | null, actual: string | null): number {
   if (!tip || !actual) return 0;
-  return tip.trim().toLowerCase() === actual.trim().toLowerCase() ? POINTS_TOP_SCORER : 0;
+  return normalizeName(tip) === normalizeName(actual) ? POINTS_TOP_SCORER : 0;
 }
 
 export function scoreGroupWinners(tip: Record<string, string>, actual: Record<string, string>): number {
