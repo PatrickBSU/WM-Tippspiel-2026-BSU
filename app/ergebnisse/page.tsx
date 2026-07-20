@@ -31,8 +31,8 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
     betsByMatch.get(b.match_id)!.push(b);
   });
 
-  const { data: specialResults } = await supabase.from("special_results").select("group_winners").eq("id", 1).single();
-  const { data: specialBets } = await supabase.from("special_bets").select("group_winners, profiles(display_name)");
+  const { data: specialResults } = await supabase.from("special_results").select("champion, top_scorer, group_winners").eq("id", 1).single();
+  const { data: specialBets } = await supabase.from("special_bets").select("champion, top_scorer, group_winners, profiles(display_name)");
 
   const stages = Array.from(new Set((matches || []).map(m => m.stage)));
   const selectedStage = searchParams.stage || (matches?.[0]?.stage);
@@ -83,6 +83,95 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
           );
         })}
       </div>
+      {(() => {
+        const champion = specialResults?.champion ?? null;
+        if (!champion) return null;
+        const tips = (specialBets ?? [])
+          .map((b: any) => ({ name: b.profiles?.display_name ?? "?", pick: b.champion ?? null }))
+          .filter((t: any) => t.pick)
+          .sort((a: any, b: any) => {
+            const ca = a.pick === champion ? 0 : 1;
+            const cb = b.pick === champion ? 0 : 1;
+            if (ca !== cb) return ca - cb;
+            return String(a.name).localeCompare(String(b.name));
+          });
+        const correctCount = tips.filter((t: any) => t.pick === champion).length;
+        return (
+          <div className="mt-10">
+            <h2 className="font-display text-2xl font-bold tracking-tightest mb-1">Weltmeister</h2>
+            <p className="text-muted text-sm mb-4">Wer hat den Weltmeister richtig getippt? · 15 Punkte</p>
+            <div className="bg-surface border border-border rounded-lg overflow-hidden">
+              <div className="p-4 border-b border-border bg-bg/30">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="font-medium inline-flex items-center gap-1"><Flag team={champion} /> {champion}</span>
+                  <span className="text-xs text-muted">{correctCount} / {tips.length} richtig</span>
+                </div>
+              </div>
+              {tips.length > 0 && (
+                <div className="divide-y divide-border">
+                  {tips.map((t: any, i: number) => {
+                    const ok = t.pick === champion;
+                    return (
+                      <div key={i} className="px-4 py-2 flex items-center justify-between text-sm">
+                        <span>{t.name}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="inline-flex items-center gap-1 font-mono text-muted"><Flag team={t.pick} /> {t.pick}</span>
+                          <span className={`font-mono font-bold w-8 text-right ${ok ? "text-win" : "text-muted"}`}>{ok ? 15 : 0}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+      {(() => {
+        const topScorer = specialResults?.top_scorer ?? null;
+        if (!topScorer) return null;
+        const norm = (s: string) => s.trim().toLowerCase();
+        const tips = (specialBets ?? [])
+          .map((b: any) => ({ name: b.profiles?.display_name ?? "?", pick: b.top_scorer ?? null }))
+          .filter((t: any) => t.pick)
+          .sort((a: any, b: any) => {
+            const ca = norm(a.pick) === norm(topScorer) ? 0 : 1;
+            const cb = norm(b.pick) === norm(topScorer) ? 0 : 1;
+            if (ca !== cb) return ca - cb;
+            return String(a.name).localeCompare(String(b.name));
+          });
+        const correctCount = tips.filter((t: any) => norm(t.pick) === norm(topScorer)).length;
+        return (
+          <div className="mt-10">
+            <h2 className="font-display text-2xl font-bold tracking-tightest mb-1">Torschützenkönig</h2>
+            <p className="text-muted text-sm mb-4">Wer hat den Torschützenkönig richtig getippt? · 10 Punkte</p>
+            <div className="bg-surface border border-border rounded-lg overflow-hidden">
+              <div className="p-4 border-b border-border bg-bg/30">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="font-medium">{topScorer}</span>
+                  <span className="text-xs text-muted">{correctCount} / {tips.length} richtig</span>
+                </div>
+              </div>
+              {tips.length > 0 && (
+                <div className="divide-y divide-border">
+                  {tips.map((t: any, i: number) => {
+                    const ok = norm(t.pick) === norm(topScorer);
+                    return (
+                      <div key={i} className="px-4 py-2 flex items-center justify-between text-sm">
+                        <span>{t.name}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="font-mono text-muted">{t.pick}</span>
+                          <span className={`font-mono font-bold w-8 text-right ${ok ? "text-win" : "text-muted"}`}>{ok ? 10 : 0}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
       {(() => {
         const actualGW: Record<string, string> = (specialResults?.group_winners as Record<string, string>) ?? {};
         const decided = Object.entries(GROUPS).filter(([code]) => actualGW[code]);
