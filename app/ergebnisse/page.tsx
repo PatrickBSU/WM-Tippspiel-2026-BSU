@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Flag from "@/components/Flag";
 import { STAGE_LABELS } from "@/lib/data/schedule";
 import { GROUPS } from "@/lib/data/teams";
+import { normalizeName } from "@/lib/scoring";
 
 export const dynamic = "force-dynamic";
 
@@ -130,7 +131,7 @@ export default async function ErgebnissePage({ searchParams }: { searchParams: {
       {(() => {
         const topScorer = specialResults?.top_scorer ?? null;
         if (!topScorer) return null;
-        const norm = (s: string) => s.trim().toLowerCase();
+        const norm = (s: string) => normalizeName(s);
         const tips = (specialBets ?? [])
           .map((b: any) => ({ name: b.profiles?.display_name ?? "?", pick: b.top_scorer ?? null }))
           .filter((t: any) => t.pick)
